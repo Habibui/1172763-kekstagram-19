@@ -1,7 +1,7 @@
 # Личный проект «Кекстаграм» [![Build status][travis-image]][travis-url]
 
 * Студент: [Габиб Намазов](https://up.htmlacademy.ru/javascript/19/user/1172763).
-* Наставник: `Неизвестно`.
+* Наставник: [Роман Духницький].
 
 ---
 
