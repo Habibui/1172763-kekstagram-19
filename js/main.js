@@ -20,19 +20,11 @@ var NAMES = [
 ];
 
 function getRandomInt(min, max) {
-  min = Math.ceil(min);
-  max = Math.floor(max);
-  return Math.floor(Math.random() * (max - min)) + min;
+  return Math.floor(Math.random() * (max + 1 - min) + min);
 }
 
 var getRandomElement = function (array) {
-  var len = array.length;
-
-  if (len === 0) {
-    return undefined;
-  }
-
-  return array[getRandomInt(0, len)];
+  return array[getRandomInt(0, array.length)];
 };
 
 var getPictures = function (amount) {
@@ -42,35 +34,24 @@ var getPictures = function (amount) {
     var comments = [];
 
     for (var i = 0; i < number; ++i) {
-      var avatar = 'img/avatar-' + getRandomInt(1, 6 + 1) + '.svg';
-      var message = getRandomElement(MESSAGES);
-      var name = getRandomElement(NAMES);
-
-      var comment = {
-        avatar: avatar,
-        message: message,
-        name: name
-      };
-
-      comments.push(comment);
+      comments.push({
+        avatar: 'img/avatar-' + getRandomInt(1, 6 + 1) + '.svg',
+        message: getRandomElement(MESSAGES),
+        name: getRandomElement(NAMES),
+      });
     }
     return comments;
   };
 
   for (var i = 1; i < amount + 1; ++i) {
-    var url = 'photos/' + i + '.jpg';
-    var description = 'Какое-то описание, в ТЗ нет указаний на этот счёт';
     var likes = getRandomInt(15, 200 + 1);
 
-    var comments = getComments(getRandomInt(0, likes / 3));
-
-    var picture = {
-      url: url,
-      description: description,
-      likes: likes,
-      comments: comments
-    };
-    pictures.push(picture);
+    pictures.push({
+      url: 'photos/' + i + '.jpg',
+      description: 'Описание',
+      likes: getRandomInt(15, 200 + 1),
+      comments: getComments(getRandomInt(0, likes / 3)),
+    });
   }
   return pictures;
 };
