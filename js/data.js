@@ -41,6 +41,7 @@
     var pictures = [];
 
     for (var i = 1; i < amount + 1; ++i) {
+      var likes = getRandomInt(15, 200 + 1);
 
       pictures.push({
         url: 'photos/' + i + '.jpg',
