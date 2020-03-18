@@ -13,12 +13,12 @@
 
   var NAMES = [
     'Артём',
-    'Вася',
-    'Пётр',
-    'Роберт Карлович',
-    'Вика',
-    'Маша',
-    'Сара'
+    'Антон',
+    'Рома',
+    'Григорий',
+    'Макс',
+    'Жека',
+    'Тереза'
   ];
 
   var AVATARS_AMOUNT = 6;
@@ -28,17 +28,11 @@
     var comments = [];
 
     for (var i = 0; i < number; ++i) {
-      var avatar = 'img/avatar-' + window.utils.getRandomInt(1, AVATARS_AMOUNT + 1) + '.svg';
-      var message = window.utils.getRandomElement(MESSAGES);
-      var name = window.utils.getRandomElement(NAMES);
-
-      var comment = {
-        avatar: avatar,
-        message: message,
-        name: name
-      };
-
-      comments.push(comment);
+      comments.push({
+        avatar: 'img/avatar-' + getRandomInt(1, AVATARS_AMOUNT + 1) + '.svg',
+        message: getRandomElement(MESSAGES),
+        name: getRandomElement(NAMES),
+      });
     }
     return comments;
   };
@@ -47,19 +41,13 @@
     var pictures = [];
 
     for (var i = 1; i < amount + 1; ++i) {
-      var url = 'photos/' + i + '.jpg';
-      var description = 'Какое-то описание, в ТЗ нет указаний на этот счёт';
-      var likes = window.utils.getRandomInt(15, 200 + 1);
 
-      var comments = getComments(window.utils.getRandomInt(0, likes / 3));
-
-      var picture = {
-        url: url,
-        description: description,
-        likes: likes,
-        comments: comments
-      };
-      pictures.push(picture);
+      pictures.push({
+        url: 'photos/' + i + '.jpg',
+        description: 'Описание',
+        likes: getRandomInt(15, 200 + 1),
+        comments: getComments(getRandomInt(0, likes / 3)),
+      });
     }
     return pictures;
   };
