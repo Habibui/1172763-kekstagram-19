@@ -95,7 +95,6 @@
     document.addEventListener('click', onClickCloseErrorContainer);
   };
 
-
   window.network.loadData(renderPictures, onError);
 
   window.render = {
