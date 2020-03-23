@@ -9,27 +9,31 @@
   var BRIGHTNESS_RANGE = 2;
   var MIN_BRIGHTNESS_VALUE = 1;
 
-  var imagePreview = window.form.uploadFileForm.querySelector('.img-upload__preview img');
+  var imagePreview = window.form.uploadOverlay.querySelector('.img-upload__preview img');
 
-  var reduceButton = window.form.uploadFileForm.querySelector('.scale__control--smaller');
-  var enlargeButton = window.form.uploadFileForm.querySelector('.scale__control--bigger');
-  var scaleField = window.form.uploadFileForm.querySelector('.scale__control--value');
+  var reduceButton = window.form.uploadOverlay.querySelector('.scale__control--smaller');
+  var enlargeButton = window.form.uploadOverlay.querySelector('.scale__control--bigger');
+  var scaleField = window.form.uploadOverlay.querySelector('.scale__control--value');
 
-  var effectButtons = window.form.uploadFileForm.querySelectorAll('.effects__radio');
-  var effectLevel = window.form.uploadFileForm.querySelector('.effect-level');
+  var effectButtons = window.form.uploadOverlay.querySelectorAll('.effects__radio');
+  var effectLevel = window.form.effectLevel;
   var effectInput = effectLevel.querySelector('.effect-level__value');
-  var effectlevelBar = effectLevel.querySelector('.effect-level__line');
+  var effectLevelBar = effectLevel.querySelector('.effect-level__line');
   var effectLevelButton = effectLevel.querySelector('.effect-level__pin');
+  var effectLevelFillBar = effectLevel.querySelector('.effect-level__depth');
 
-  var setImageScale = function (positiveFlag) {
+  var bar;
+  var barLength;
+
+  var setImageScale = function (isPositive) {
     var currentScale = Number.parseInt(scaleField.value, 10);
 
-    if (positiveFlag && (currentScale + SCALE_STEP) <= MAX_SCALE) {
+    if (isPositive && (currentScale + SCALE_STEP) <= MAX_SCALE) {
       scaleField.value = (currentScale + SCALE_STEP) + '%';
       imagePreview.style.transform = 'scale(' + (currentScale + SCALE_STEP) / 100 + ')';
     }
 
-    if (!positiveFlag && (currentScale - SCALE_STEP) >= MIN_SCALE) {
+    if (!isPositive && (currentScale - SCALE_STEP) >= MIN_SCALE) {
       scaleField.value = (currentScale - SCALE_STEP) + '%';
       imagePreview.style.transform = 'scale(' + (currentScale - SCALE_STEP) / 100 + ')';
     }
@@ -39,13 +43,21 @@
     imagePreview.style.filter = '';
     var currentEffect;
 
-    for (i = 0; i < effectButtons.length; i++) {
+    for (i = 0; i < effectButtons.length; ++i) {
+      imagePreview.classList.remove('effects__preview--' + effectButtons[i].value);
+    }
+
+    for (i = 0; i < effectButtons.length; ++i) {
       if (effectButtons[i].checked) {
         imagePreview.classList.remove('effects__preview--' + currentEffect);
         currentEffect = effectButtons[i].value;
         if (currentEffect !== 'none') {
           effectLevel.classList.remove('hidden');
           imagePreview.classList.add('effects__preview--' + currentEffect);
+          bar = effectLevelBar.getBoundingClientRect();
+          barLength = bar.right - bar.left;
+          effectLevelButton.style.left = barLength + 'px';
+          effectLevelFillBar.style.width = '100%';
         } else {
           effectLevel.classList.add('hidden');
         }
@@ -54,9 +66,7 @@
   };
 
   var countEffectLevel = function () {
-    var bar = effectlevelBar.getBoundingClientRect();
     var pin = effectLevelButton.getBoundingClientRect();
-    var barLength = bar.right - bar.left;
     var pinOffset = pin.left - bar.left;
 
     return Math.round((pinOffset / barLength + 0.02) * 100);
@@ -91,21 +101,47 @@
     }
   };
 
+  var onEffectPinMousemove = function (evt) {
+    bar = effectLevelBar.getBoundingClientRect();
+    barLength = bar.right - bar.left;
+
+    var shift = evt.clientX - bar.left;
+
+    if (shift > 0 && shift <= barLength) {
+      effectLevelButton.style.left = shift + 'px';
+    }
+
+    effectLevelFillBar.style.width = countEffectLevel() + '%';
+
+    setEffectLevel();
+  };
+
+  var onEffectPinMouseup = function (evt) {
+    evt.preventDefault();
+
+    document.removeEventListener('mousemove', onEffectPinMousemove);
+    document.removeEventListener('mouseup', onEffectPinMouseup);
+  };
+
+  var onEffectPinMousedown = function (evt) {
+    evt.preventDefault();
+
+    document.addEventListener('mousemove', onEffectPinMousemove);
+    document.addEventListener('mouseup', onEffectPinMouseup);
+  };
+
   reduceButton.addEventListener('click', function () {
-    var positiveFlag = false;
-    setImageScale(positiveFlag);
+    setImageScale(false);
   });
 
   enlargeButton.addEventListener('click', function () {
-    var positiveFlag = true;
-    setImageScale(positiveFlag);
+    setImageScale(true);
   });
 
-  for (var i = 0; i < effectButtons.length; i++) {
+  for (var i = 0; i < effectButtons.length; ++i) {
     effectButtons[i].addEventListener('change', onChangeSelectFilter);
   }
 
-  effectLevelButton.addEventListener('mouseup', function () {
-    setEffectLevel();
-  });
+  effectLevelButton.addEventListener('mousedown', onEffectPinMousedown);
+
 })();

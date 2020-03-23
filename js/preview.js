@@ -75,6 +75,6 @@
     }
   };
 
-  initPreview();
+  setTimeout(initPreview, 1000);
 
 })();
