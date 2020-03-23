@@ -171,6 +171,8 @@
 
   window.form = {
     uploadOverlay: uploadOverlay,
+    imagePreview: imagePreview,
+    scaleField: scaleField,
     effectLevel: effectLevel,
     effectInput: effectInput
   };
